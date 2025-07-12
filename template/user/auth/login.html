@@ -1,0 +1,25 @@
+{{ define "user/auth/login.html" }} {{template "header.html" .}}
+
+<div class="text-center p-2 mt-4 fs-4 fw-medium mb-4">
+    登录
+</div>
+
+<div class="container">
+    <form method="post" action="/auth/login">
+        <div class="form-floating mb-5">
+          <input type="text" class="form-control" name="username" id="floatingInput" placeholder="">
+          <label for="floatingInput">用户名</label>
+        </div>
+
+        <div class="form-floating mb-5">
+          <input type="password" name="password" class="form-control" id="floatingInput" placeholder="">
+          <label for="floatingInput">密码</label>
+        </div>
+        <div class="d-grid p-3">
+            <button class="btn btn-primary btn-lg" type="submit">登录</button>
+        </div>
+    </form>
+</div>
+{{template "footer.html" .}}
+
+{{end}}

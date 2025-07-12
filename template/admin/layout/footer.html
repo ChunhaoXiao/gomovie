@@ -1,0 +1,59 @@
+
+</div>
+</div>
+
+
+
+<div class="modal fade" id="deleteConfirm" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">确认删除</h1>
+                <button type="button" class="btn-close" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                确实要删除？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="confirm">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    const myModal = new bootstrap.Modal(document.getElementById('deleteConfirm'), {
+        backdrop: true,
+        focus: true
+    })
+
+    let id = 0
+    let url = ""
+    document.querySelectorAll(".bi-trash").forEach(item => {
+        item.addEventListener("click", e => {
+            url = e.currentTarget.dataset.url
+            myModal.show()
+        })
+
+    })
+
+    document.getElementById("confirm").addEventListener("click", () => {
+        console.log("id is: ", id)
+        fetch(`${url}`, {
+            method: 'DELETE',
+        }).then(response => {
+            console.log("delete success.......")
+           window.location.reload()
+        })
+    })
+</script>
+</body>
+
+
+</html>
+
+
+
+

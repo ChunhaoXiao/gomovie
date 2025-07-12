@@ -1,0 +1,35 @@
+{{ define "admin/card/create.html" }}
+{{ template "header.tmpl" .}}
+
+<div class="container">
+<p class="mt-2">添加卡密</p>
+
+<form action="/admin/card/save" method="post">
+    <div class="mb-3 row">
+        <label for="staticEmail" class="col-sm-2 col-form-label">桃币数量</label>
+        <div class="col-sm-7">
+            <input type="text" name="coin" class="form-control">
+        </div>
+    </div>
+     <div class="mb-3 row">
+        <label for="staticEmail" class="col-sm-2 col-form-label">卡密数量</label>
+        <div class="col-sm-7">
+            <input type="text" name="quantity" class="form-control">
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-7">
+            <button class="btn btn-primary">提交</button>
+        </div>
+    </div>
+</form>
+
+</div>
+
+
+
+
+<script>
+</script>
+{{end}}

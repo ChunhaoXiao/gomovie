@@ -1,0 +1,101 @@
+{{ define "admin/actor/create.html" }} {{ template "header.tmpl" .}}
+
+
+
+<div class="container py-3">
+
+    <h5 class="py-2">添加演员</h5>
+
+    <form {{if .actor.ID}} action="/admin/actor/update/{{.actor.ID}}" {{else}} action="/admin/actor/save" {{end}} method="post">
+        <div class="mb-3 row">
+            <label for="staticEmail" class="col-sm-2 col-form-label text-md-end text-sm-start">演员名字</label>
+            <div class="col-sm-7">
+                <input type="text" name="name" class="form-control" value="{{.actor.Name}}">
+            </div>
+        </div>
+
+        <div class="mb-3 row align-items-center">
+            <label for="staticEmail" class="col-sm-2 col-form-label text-md-end text-sm-start">是否推荐</label>
+            <div class="col-sm-7">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" name="isRecommand" type="checkbox" {{if eq .actor.IsRecommand  1}} checked {{end}}  value="1" role="switch" id="switchCheckDefault">
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="" class="col-sm-2 col-form-label text-md-end text-sm-start">演员照片</label>
+            <div class="col-sm-6">
+                <input type="file" name="file" id="fileinput">
+
+                <div id="uploadResult" class="row">
+                    {{if .actor.ID}} {{range $index,$value := .actor.Pictures}}
+                    <div class="col-auto">
+                        <img width="100" height="100" src="/actor/{{$value}}" />
+                        <input type="hidden" name="pictures[]" value="{{$value}}" />
+                        <p class="text-center">
+                            <svg width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                </svg>
+                        </p>
+                    </div>
+                    {{end}} {{end}}
+                </div>
+
+
+            </div>
+        </div>
+</div>
+
+<div class="mb-3 row">
+    <label for="staticEmail" class="col-sm-2 col-form-label"></label>
+    <div class="col-sm-7">
+        <button class="btn btn-primary">提交</button>
+    </div>
+</div>
+
+</form>
+</div>
+
+<script>
+    document.querySelectorAll(".bi-trash").forEach(item => {
+        item.addEventListener("click", (e) => {
+            console.log("aaa")
+            e.currentTarget.parentElement.parentElement.remove()
+        })
+    })
+
+    $("#fileinput").filer({
+        limit: 5,
+        //showThumbs: true,
+        //appendTo: "#uploadResult",
+        uploadFile: {
+            url: "/admin/actor/upload",
+            enctype: 'multipart/form-data',
+            type: 'post',
+            success: (res) => {
+                //console.log(" upload res::::", res)
+                //$("#uploadResult").append(`<input name="pictures[]" value=${res.data}>`)
+                //document.querySelector("#filename").value = res.data
+                //document.querySelector("#thumbbody").innerHTML="<img src=/thumbs/"+res.thumb+"/>" 
+                $("#uploadResult").append(`<div class="col-auto">
+                    <img width="100" height="100" src="/actor/${res.data}" />
+                        <input type="hidden" name="pictures[]" value="${res.data}" />
+                        <p class="text-center">
+                            <svg width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                                </svg>
+                        </p>
+                </div>`)
+
+            }
+
+            //Request enctype {String}
+            //synchron: false //Upload synchron the files
+        }
+    });
+</script>
+
+{{end}}

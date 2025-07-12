@@ -1,0 +1,19 @@
+{{ define "admin/card/index.html" }}
+{{ template "header.tmpl" .}}
+    <p>卡密分组列表</p>
+    <p><a class="btn btn-primary" href="/admin/card/create">创建</a></p>
+    <table class="table">
+        <tr>
+            <td>分组名称</td>
+            <td>卡密数量</td>
+            <td></td>
+        </tr>
+        {{range .datas}}
+        <tr>
+            <td><a href="/admin/card/show/{{.Id}}">{{.Group_name}}</a></td>
+            <td>{{.Card_count}}</td>
+            <td>delete</td>
+        </tr>
+        {{end}}
+    </table>
+{{end}}

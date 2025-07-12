@@ -1,0 +1,18 @@
+{{ define "admin/card/show.html" }}
+{{ template "header.tmpl" .}}
+
+    <table class="table">
+        <tr>
+            <td>卡号</td>
+            <td></td>
+            <td></td>
+        </tr>
+        {{range .datas}}
+        <tr>
+            <td>{{.CardNumber}}</td>
+            <td></td>
+            <td>delete</td>
+        </tr>
+        {{end}}
+    </table>
+{{end}}

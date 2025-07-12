@@ -1,0 +1,112 @@
+{{ define "admin/movie/create.tmpl" }} 
+{{ template "header.tmpl" .}}
+
+
+
+<h5>添加movie</h5>
+
+<form {{if .movieId}} action="/admin/movie/update/{{.movieId}}" {{else}}action="/admin/movie/save" {{end}} method="post" >
+    <div class="row mb-3">
+        <label for="" class="col-sm-2 col-form-label text-md-end text-sm-start">标题</label>
+        <div class="col-sm-6">
+            <input type="text" name="title" class="form-control" value="{{.title}}">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label for="" class="col-sm-2 col-form-label text-md-end text-sm-start">上传文件</label>
+        <div class="col-sm-6">
+            <input type="file" name="file" id="fileinput">
+            <div id="uploadResult"></div>
+            <input type="hidden" name="filename" id="filename" value="{{.filename}}">
+            <div id="thumbbody">{{if .movieId}}<img id="thumb" src="/thumbs/{{.thumbnail}}" width="200" height="200"/>{{end}}</div>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label for="" class="col-sm-2 col-form-label text-md-end text-sm-start">时长</label>
+        <div class="col-sm-6">
+            <input type="text" class="form-control" name="duration" id="duration" value="{{.duration}}" readonly>
+        </div>
+
+    </div>
+    <div class="row mb-4">
+        <label for="" class="col-sm-2 col-form-label text-md-end text-sm-start">演员</label>
+        <div class="col-sm-6">
+            {{/* <input type="text" name="actor" class="form-control" value="{{.actor}}"> */}}
+            
+                <select class="form-select" name="actorId">
+                {{range getActors}}
+                    <option value="{{.ID}}">{{.Name}}</option>
+                {{end}}
+                </select>
+            
+            
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <label for="" class="col-sm-2 col-form-label text-md-end text-sm-start">分类</label>
+        <div class="col-sm-7">
+            {{if .title}}
+              {{range getCategories}}
+                <input type="checkbox" class="btn-check" id="cate-{{.ID}}" autocomplete="off" name="categories" value="{{.ID}}" {{if index $.MovieCategories .ID }} checked {{end}}>
+
+                <label class="btn btn-outline-primary me-3 mb-3" for="cate-{{.ID}}">{{.Name}}</label>
+               {{end}}
+            {{else}}
+                {{range getCategories}}
+                 <input type="checkbox" class="btn-check" id="cate-{{.ID}}" autocomplete="off" name="categories" value="{{.ID}}">
+                 <label class="btn btn-outline-primary me-3 mb-3" for="cate-{{.ID}}">{{.Name}}</label>
+                {{end}}
+            {{end}}
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="" class="col-sm-2"></label>
+        <div class="col-sm-6">
+            <button type="submit" class="btn btn-primary">提交</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.getElementById('fileinput').onchange = setFileInfo;
+    window.URL = window.URL || window.webkitURL;
+
+    function setFileInfo() {
+        var files = this.files;
+        console.log('this.files:', files[0])
+        var video = document.createElement('video');
+        video.preload = 'metadata';
+        video.onloadedmetadata = function() {
+            window.URL.revokeObjectURL(video.src);
+            var duration = video.duration;
+            console.log('duration', duration)
+            document.querySelector("#duration").value = Math.floor(duration)
+        }
+        video.src = URL.createObjectURL(files[0]);
+    }
+
+
+    $("#fileinput").filer({
+        limit: 1,
+        showThumbs: true,
+        appendTo: "#uploadResult",
+        uploadFile: {
+            url: "/admin/movie/upload",
+            enctype: 'multipart/form-data',
+            type: 'post',
+            success: (res) => {
+                console.log(" upload res::::", res)
+                document.querySelector("#filename").value = res.data
+                document.querySelector("#thumbbody").innerHTML="<img src=/thumbs/"+res.thumb+"/>"
+                //document.querySelector("#thumb").src="/thumbs/"+res.thumb
+            }
+
+            //Request enctype {String}
+            //synchron: false //Upload synchron the files
+        }
+    });
+</script>
+{{end}}

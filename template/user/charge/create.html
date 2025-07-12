@@ -1,0 +1,23 @@
+{{ define "user/charge/create.html" }}
+{{template "header.html" .}}
+<div class="container">
+    <p>您当前的桃币数量：0</p>
+    <form>
+        <div class="mb-3 row">
+          <label  class="form-label col-2 col-form-label">卡号</label>
+          <div class="col-10">
+            <input type="email" class="form-control" id="exampleFormControlInput1">
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+            <label class="col-2"></label>
+            <div class="col-10">
+            <button class="btn btn-primary">提交</button>
+            </div>
+        </div>
+    </form>
+    
+</div>
+
+{{end}}
