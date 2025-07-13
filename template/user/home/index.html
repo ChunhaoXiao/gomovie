@@ -24,7 +24,9 @@
       {{range indexActors}}
       <div class="col">
         <div>
-          <img src="/actor/{{index .Pictures 0}}" width="100%" height="130">
+          {{if .Pictures}}
+           <img src="/actor/{{index .Pictures 0}}" width="100%" height="130">
+          {{end}}
         </div>
         <div class="text-center">
            {{.Name}}
