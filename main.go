@@ -37,5 +37,5 @@ func main() {
 		//"selectedCategory": templatefunc.IsCategorySelected,
 	})
 	r.LoadHTMLGlob("template/**/**/*")
-	r.Run()
+	r.Run(":8081")
 }

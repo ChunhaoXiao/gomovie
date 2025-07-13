@@ -1,0 +1,29 @@
+    version: '3.8'
+    services:
+      gin-app:
+        build: .
+        ports:
+          - "8081:8081"
+        restart: on-failure
+        depends_on:
+          - db # If you have a database service
+        # environment:
+        #   # Define environment variables for your Gin app, e.g., database connection strings
+        #   DB_HOST: db
+        #   DB_PORT: 5432
+        #   DB_USER: user
+        #   DB_PASSWORD: password
+        #   DB_NAME: mydatabase
+      db: # Example for a PostgreSQL database
+        image: mysql:8.0.31
+        expose:
+          - 3306
+        ports:
+          - "3306:3306"
+        environment:
+        - MYSQL_ROOT_PASSWORD=123456
+        - MYSQL_DATABASE=movie
+        - MYSQL_USER=movie
+        - MYSQL_PASSWORD=123456
+    # volumes:
+    #   db_data:

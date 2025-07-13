@@ -100,12 +100,14 @@ func MakeMovieThumb(file string) string {
 
 	pictureFileName := uuid.New().String() + ".jpg"
 	outputImage := "thumb/" + pictureFileName
-	cmd := exec.Command("ffmpeg.exe", "-i", file,
+	fmt.Println("outputPage::::", outputImage)
+	cmd := exec.Command("ffmpeg", "-i", file,
 		"-ss", time,
 		"-frames:v", "1",
 		"-s", fmt.Sprintf("%dx%d", width, height),
 		outputImage)
 	err := cmd.Run()
+	fmt.Println("create thumbnail err:", err)
 	if err != nil {
 		//panic("could not generate frame")
 		return ""
