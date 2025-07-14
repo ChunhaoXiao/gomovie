@@ -21,9 +21,9 @@
         ports:
           - "3306:3306"
         environment:
-        - MYSQL_ROOT_PASSWORD=123456
+        - MYSQL_ROOT_PASSWORD=Cookie_1125
         - MYSQL_DATABASE=movie
         - MYSQL_USER=movie
-        - MYSQL_PASSWORD=123456
+        - MYSQL_PASSWORD=Cookie_1125
     # volumes:
     #   db_data:
