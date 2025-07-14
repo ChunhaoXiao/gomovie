@@ -99,6 +99,15 @@ func MakeMovieThumb(file string) string {
 		file = "uploads/" + file
 	}
 
+	info, errs := os.Stat(file)
+	if os.IsNotExist(errs) {
+		//return false // File does not exist
+		fmt.Println("file not existssss:")
+	} else {
+		fmt.Println("file exists.......")
+		fmt.Println(info)
+	}
+
 	pictureFileName := uuid.New().String() + ".jpg"
 	outputImage := "thumb/" + pictureFileName
 	fmt.Println("outputPage::::", outputImage)
