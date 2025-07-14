@@ -109,7 +109,7 @@ func MakeMovieThumb(file string) string {
 	}
 
 	pictureFileName := uuid.New().String() + ".jpg"
-	outputImage := "thumb/" + pictureFileName
+	outputImage := "./thumb/" + pictureFileName
 	fmt.Println("outputPage::::", outputImage)
 	var stderr bytes.Buffer
 
