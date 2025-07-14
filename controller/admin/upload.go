@@ -10,8 +10,11 @@ import (
 )
 
 func Upload(c *gin.Context) {
-	file, _ := c.FormFile("file")
-	fmt.Println(file)
+	file, err := c.FormFile("file")
+	if err != nil {
+		fmt.Println("upload err####", err)
+	}
+	fmt.Println("file is:###", file)
 	fileName := uuid.New().String()
 	ext := filepath.Ext(file.Filename)
 	uploadedFileName := "./uploads/" + fileName + ext
