@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
 	"os"
@@ -101,13 +102,16 @@ func MakeMovieThumb(file string) string {
 	pictureFileName := uuid.New().String() + ".jpg"
 	outputImage := "thumb/" + pictureFileName
 	fmt.Println("outputPage::::", outputImage)
+	var stderr bytes.Buffer
+
 	cmd := exec.Command("ffmpeg", "-i", file,
 		"-ss", time,
 		"-frames:v", "1",
 		"-s", fmt.Sprintf("%dx%d", width, height),
 		outputImage)
+	cmd.Stderr = &stderr
 	err := cmd.Run()
-	fmt.Println("create thumbnail err:", err)
+	fmt.Println(fmt.Sprint(err)+":::::::", stderr.String())
 	if err != nil {
 		//panic("could not generate frame")
 		return ""
