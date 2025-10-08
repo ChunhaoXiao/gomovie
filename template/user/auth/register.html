@@ -4,7 +4,7 @@
     注册
 </div>
 <div class="container">
-    <form method="post" action="/user/save" id="regsterForm">
+    <form method="post" action="/auth/register" id="regsterForm">
         <div class="mb-3 row p-2 mx-auto mt-2">
             <input name="username" class="border-0 border-bottom border-dark-subtle p-2" placeholder="用户名" />
         </div>
@@ -31,7 +31,7 @@
         const formData = new FormData(document.querySelector("#regsterForm"))
         const postDatas = Object.fromEntries(formData)
         console.log("postData", postDatas)
-        fetch("/user/save", {
+        fetch("/auth/register", {
             method: 'post',
             body: JSON.stringify(postDatas)
         }).then(res => {

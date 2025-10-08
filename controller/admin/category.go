@@ -1,6 +1,7 @@
 package admin
 
 import (
+	"fmt"
 	"movie/db"
 	"movie/dto"
 	"movie/models"
@@ -21,11 +22,26 @@ func SaveCategory(c *gin.Context) {
 
 }
 
+type CateRes struct {
+	Cate       models.Category
+	MovieCount int
+}
+
 func CategoryList(c *gin.Context) {
 	var categories []models.Category
 	db.DB.Find(&categories)
+	//var result []map[string]interface{} //dto.CategoryResult
+
+	var cateRes []CateRes
+
+	db.DB.Model(&models.Category{}).Select("categories.*,COUNT(category_id) as MovieCount").Joins("LEFT JOIN movie_categories ON categories.id=movie_categories.category_id").Group("categories.id").Scan(&cateRes)
+
+	for _, item := range cateRes {
+		fmt.Println("===================>", item)
+	}
+
 	c.HTML(http.StatusOK, "admin/category/index.html", gin.H{
-		"datas": categories,
+		"datas": cateRes,
 	})
 }
 

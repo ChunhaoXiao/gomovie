@@ -4,7 +4,34 @@
 
 
 <p>电影列表</p>
-<p><a class="btn btn-primary" href="/admin/movie/create">创建</a></p>
+<div class="d-flex py-3 align-items-center  justify-content-between">
+    <a class="btn btn-primary" href="/admin/movie/create">创建</a>
+    <form class="row row-cols-lg-auto g-1 align-items-center" action="/admin/movie/index" method="get">
+        <div class="col mx-3">
+            
+            <input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="分类" name="category" value="{{.category}}">
+            <datalist id="datalistOptions">
+                {{range getCategories}}
+                     <option value="{{.Name}}">
+                {{end}}
+            </datalist>
+        </div>
+
+        <div class="col mx-3">
+            <input class="form-control" list="actorList" id="actorLists" placeholder="演员" name="actor" value="{{.actor}}">
+            <datalist id="actorList">
+                {{range getActors}}
+                     <option value="{{.Name}}">
+                {{end}}
+            </datalist>
+        </div>
+
+        <div class="col mx-3">
+            
+            <button class="btn btn-primary">搜索</button>
+        </div>
+    </form>
+</div>
 
 <table class="table table-bordered">
     <tr>
@@ -12,7 +39,7 @@
         <th>标题</th>
         <th>时长</th>
         <th>演员</th>
-        <th></th>
+        <th>分类</th>
         <th></th>
     </tr>
     {{range .movies}}
@@ -21,6 +48,7 @@
             <td>{{.Title}}</td>
             <td>{{ .Duration|formatDuration}}分钟</td>
             <td>{{.Actor.Name}}</td>
+            <td>{{range .Categories}} {{.Name}} {{end}}</td>
             <td><a href="/admin/movie/{{.ID}}">播放</a></td>
             <td>
                 <a href="/admin/movie/edit/{{.ID}}" class="text-secondary mx-5">
@@ -40,6 +68,22 @@
     {{end}}
 
 </table>
+<div>
+    <nav aria-label="...">
+        <ul class="pagination">
+            <li class="page-item"><a href="#" class="page-link">上一页</a></li>
+            <!-- <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item active"> -->
+            {{range $idex,$v := .pageStr}}
+            <li class="page-item {{if eq $.page $v}} active {{end}}">
+            <a class="page-link"  href="/admin/movie/index?category={{$.category}}&actor={{$.actor}}&page={{$v}}" aria-current="page">{{$v}}</a>
+            </li>
+            {{end}}
+           
+            <li class="page-item"><a class="page-link" href="#">下一页</a></li>
+        </ul>
+    </nav>
+</div>
 {{ template "footer.html" .}}
 
 {{end}}

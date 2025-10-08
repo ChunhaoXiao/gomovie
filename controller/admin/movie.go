@@ -16,14 +16,27 @@ import (
 )
 
 func MovieList(c *gin.Context) {
+	category := c.DefaultQuery("category", "")
+	actor := c.DefaultQuery("actor", "")
+	page := c.DefaultQuery("page", "1")
+	currentPage, _ := strconv.Atoi(page)
 	var movies []models.Movie
-	db.DB.Preload("Actor").Find(&movies)
+	perPage := 30
+	db.DB.Preload("Actor").Preload("Categories").Order("id desc").Scopes(utils.Paginate(c.Request, perPage)).Find(&movies)
 	//fmt.Println("movie list:", movies)
 	for _, obj := range movies {
 		fmt.Println(obj.Actor.Name)
 	}
+	var movieCount int64
+	db.DB.Model(&models.Movie{}).Count(&movieCount)
+	pageStr := utils.GeneratePageStr(perPage, currentPage, int(movieCount), 10)
+	fmt.Println("pageStr.....................", pageStr)
 	c.HTML(http.StatusOK, "admin/movie/index.html", gin.H{
-		"movies": movies,
+		"movies":   movies,
+		"pageStr":  pageStr,
+		"page":     currentPage,
+		"actor":    actor,
+		"category": category,
 	})
 }
 
@@ -45,8 +58,10 @@ func SaveMovie(c *gin.Context) {
 	categoriesids := movieCreateDto.Categories
 	fmt.Println("categoryIDS:", categoriesids)
 	db.DB.Where("id IN ?", categoriesids).Find(&categories)
-	thumb := utils.MakeMovieThumb(movieCreateDto.Filename)
+	thumbs := utils.MakeMovieThumb(movieCreateDto.Filename, movieCreateDto.Duration)
 
+	//thumbs := utils.MakeMovieThumb(movieCreateDto.Filename, time)
+	//thumbs := []string{thumb}
 	fmt.Println("###cates:::", categories)
 	entity := models.Movie{
 		Title: movieCreateDto.Title,
@@ -55,7 +70,7 @@ func SaveMovie(c *gin.Context) {
 		Duration:   &movieCreateDto.Duration,
 		Categories: categories,
 		ActorID:    uint(movieCreateDto.ActorId),
-		Thumbnail:  &thumb,
+		Thumbnail:  thumbs,
 	}
 	erros := db.DB.Create(&entity).Error
 	if erros != nil {
@@ -125,6 +140,7 @@ func EditMovie(c *gin.Context) {
 	})
 }
 
+/*
 func UpdateMovie(c *gin.Context) {
 	id := c.Param("id")
 	var movie models.Movie
@@ -148,12 +164,12 @@ func UpdateMovie(c *gin.Context) {
 	if len(categoriesids) > 0 {
 		db.DB.Where("id IN ?", categoriesids).Find(&categories)
 	}
-	thumb := utils.MakeMovieThumb(movieCreateDto.Filename)
+	utils.MakeMovieThumb(movieCreateDto.Filename, movieCreateDto.Duration)
 	movie.Title = movieCreateDto.Title
 	//movie.Actor = &movieCreateDto.Actor
 	movie.Filename = movieCreateDto.Filename
 	movie.Duration = &movieCreateDto.Duration
-	movie.Thumbnail = &thumb
+	//movie.Thumbnail = &thumb
 	movie.ActorID = uint(movieCreateDto.ActorId)
 	//movie.Categories = categories
 	db.DB.Save(&movie)
@@ -172,4 +188,4 @@ func UpdateMovie(c *gin.Context) {
 	// 	//Thumbnail: &pictureFileName,
 	// }
 
-}
+}*/

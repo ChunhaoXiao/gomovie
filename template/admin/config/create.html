@@ -1,0 +1,27 @@
+{{ define "admin/config/create.html" }}
+{{ template "header.tmpl" .}}
+
+
+<p>系统配置</p>
+
+<form action="/admin/config/save"  method="post">
+    <div class="mb-3 row">
+        <label for="staticEmail" class="col-sm-2 col-form-label">充值卡购买配置</label>
+        <div class="col-sm-7">
+            <textarea  name="charge" class="form-control" rows="5">{{index .configs "charge"}}</textarea>
+        </div>
+    </div>
+    <div class="mb-3 row">
+        <label for="staticEmail" class="col-sm-2 col-form-label"></label>
+        <div class="col-sm-7">
+            <button class="btn btn-primary">提交</button>
+        </div>
+    </div>
+</form>
+
+
+
+
+<script>
+</script>
+{{end}}

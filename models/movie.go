@@ -4,13 +4,17 @@ import (
 	"gorm.io/gorm"
 )
 
+type Thumbnails []string
+
 type Movie struct {
 	gorm.Model
-	Title      string `form:"title"`
-	Filename   string `form:"filename"`
-	Thumbnail  *string
+	Title      string     `form:"title"`
+	Filename   string     `form:"filename"`
+	Thumbnail  Thumbnails `gorm:"serializer:json"`
+	Price      uint
 	Actor      Actor       `gorm:"foreignKey:ActorID"`
 	Duration   *int16      `form:"duration"`
+	Users      []*User     `gorm:"many2many:user_movies;"`
 	Categories []*Category `gorm:"many2many:movie_categories;"`
 	ActorID    uint
 }

@@ -1,23 +1,91 @@
 {{ define "user/charge/create.html" }}
 {{template "header.html" .}}
 <div class="container">
-    <p>您当前的桃币数量：0</p>
-    <form>
+    <p>您当前的桃币数量：{{.coin}}</p>
+    <form method="post" action="/user/charge">
         <div class="mb-3 row">
           <label  class="form-label col-2 col-form-label">卡号</label>
           <div class="col-10">
-            <input type="email" class="form-control" id="exampleFormControlInput1">
+            <input type="text" name="card_number" class="form-control" id="cardNumber">
           </div>
         </div>
 
         <div class="mb-3 row">
             <label class="col-2"></label>
             <div class="col-10">
-            <button class="btn btn-primary">提交</button>
+              <button class="btn btn-primary" type="submit" id="submitForm">提交</button>
             </div>
         </div>
+        <div class="row m-2" id="message">
+
+        </div>
+        <div class="row">
+          {{getChargeConfig}}
+        </div>
+        <!--
+        <div class="alert alert-danger d-none" role="alert" id="myAlert">
+          
+        </div>
+        <div class="alert alert-success d-none" id="charge-success">
+          充值成功
+        </div>
+        -->
     </form>
     
 </div>
 
+<script>
+  document.querySelector("#cardNumber").addEventListener("focus", ()=> {
+    document.querySelector("#message").innerHTML = ""
+  })
+  document.querySelector("form").addEventListener("submit", (e) => {
+    document.querySelector("#message").innerHTML = ""
+    e.preventDefault()
+    
+    document.querySelector(".alert")
+    const card = document.querySelector("#cardNumber").value
+    const msg = document.querySelector("#message")
+    console.log("value:", card)
+    if(!card) {
+      let contents =`<div class="alert alert-danger p-2" role="alert">卡号不能为空</div>`;
+      msg.innerHTML=contents
+      return
+    }
+    if(card) {
+      fetch("/user/charge",{
+        method:"POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        body: JSON.stringify({card_number:card})
+      }).then(res => {
+        console.log("res status", res.status)
+        console.log("res content",res)
+        
+        res.json().then(data => {
+          
+          if(res.status === 400) {
+            console.log("asdsadsadsad")
+            let contents =`<div class="alert alert-danger p-2" role="alert">${data.error}</div>`;
+            //const contents = `aassddd`;
+            msg.innerHTML=contents
+            //console.log("data", data)
+            //const alert = document.querySelector('#myAlert')
+            //alert.innerHTML=data.error
+            //alert.classList.remove("d-none")
+          } else if(res.status === 200) {
+            console.log("success.............")
+            let contents =`<div class="alert alert-success p-2" role="alert">充值成功</div>`;
+            msg.innerHTML = contents
+            setTimeout(() => {window.location.reload()},2000)
+           // document.querySelector("#charge-success").classList.remove("d-none")
+          }
+        })
+      }).catch(e => {
+        console.log("error", e)
+      })
+    }
+  })
+</script>
+{{template "footer.html" .}}
 {{end}}

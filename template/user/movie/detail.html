@@ -1,22 +1,125 @@
-{{ define "user/movie/detail.html" }}
-{{template "header.html" .}}
+{{ define "user/movie/detail.html" }} {{template "header.html" .}}
 
-    <div>
-        <h5 class="p-2">{{.movie.Title}}</h5>
-    </div>
-    {{if loginUser}}
-    <div style="height:300px">
-        <video width="100%" height="100%" controls>
+
+<div>
+    <h5 class="p-2">{{.movie.Title}}</h5>
+</div>
+
+{{if loginUser}}
+<div>
+    {{if gt .usermovie 0}}
+    <video width="100%" height="100%" controls>
           <source src="/video/{{.movie.ID}}" type="video/mp4">
-        </video>
+        </video> 
+        
+        {{range .movie.Categories}}
+            {{.Name}}
+        {{end}}
+        
+        {{else}}
+        {{range $index,$value := .movie.Thumbnail}}
+          <img class="object-fit" style="width:100%" src="/thumbs/{{$value}}">
+        {{end}}
+
+    <div class="alert alert-dark text-center mt-1" role="alert">
+        <span class="alert-link" id="buy">购买此视频</span>
     </div>
-    {{else}}
-        <div class="p-2">
-            <img class="object-fit" style="width:100%" src="/thumbs/{{.movie.Thumbnail}}">
-        </div>
-        <div class="p-3">
-            <a class="fw-bold text-secondary" href="/auth/login">登陆</a>后可以查看购买过的视频
-        </div>
     {{end}}
-{{ template "footer.html" .}}
+</div>
+{{else}}
+<div class="p-2">
+    <img class="object-fit" style="width:100%" src="/thumbs/{{.movie.Thumbnail}}">
+</div>
+<div class="p-3">
+    <a class="fw-bold text-secondary" href="/auth/login">登陆</a>后可以查看购买过的视频
+</div>
 {{end}}
+
+
+<!-- Vertically centered modal -->
+
+<div class="modal fade" id="exampleModal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                确定购买？
+            </div>
+            <div class="modal-footer">
+                <p class="w-100 alert alert-danger d-none">sdfdsfdsf</p>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="confirm-buy">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    const myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+            backdrop: true,
+            focus: true
+        })
+    document.querySelector("#exampleModal").addEventListener('hidden.bs.modal',(evt) => {
+        document.querySelector(".alert-danger").innerHTML=""
+        document.querySelector(".alert-danger").classList.add("d-none")
+    })
+
+    console.log("mymodel instance", myModal)
+    {{if loginUser}}
+        {{if eq .usermovie 0 }}
+        document.querySelector("#buy").addEventListener("click", () => {
+            myModal.show()
+
+        })
+        {{end}}
+    {{end}}
+
+    document.querySelector("#confirm-buy").addEventListener("click", () => {
+        console.log("confirmed.......")
+        const id = "{{.movie.ID}}"
+        console.log("id", id)
+        fetch("/user/buy", {
+            method: "post",
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            },
+            body: JSON.stringify({
+                id: id
+            })
+        }).then(res => {
+            console.log("ress", res.status)
+            const status = res.status
+
+            res.json().then(data => {
+
+
+                console.log("data########", data)
+                const ele = document.querySelector(".alert-danger")
+                ele.classList.remove("d-none")
+                if(status === 200) {
+                    ele.classList.remove("alert-danger")
+                    ele.classList.add("alert-success")
+                    ele.innerHTML = "购买成功"
+                    setTimeout(() => {window.location.reload()},2000)
+
+                }else {
+                    let err = data.err
+                    if(status===402) {
+                        err = err +   ` <a class="alert-link" href="/user/charge">点此充值</a>`     
+                    }
+                    ele.innerHTML=err
+                }
+                
+            })
+        })
+
+    })
+</script>
+
+
+{{ template "footer.html" .}} {{end}}

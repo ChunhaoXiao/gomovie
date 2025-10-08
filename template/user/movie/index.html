@@ -3,14 +3,16 @@
 
     <div class="container">
         <p>列表</p>
-        <div class="row row-cols-2">
+        <div class="row row-cols-2 g-0">
             {{range .movies}}
                 <div class="col position-relative">
                     
-                        <div>
-                            <img class="img-thumbnail rounded object-fit-fill" src="/thumbs/{{.Thumbnail}}">
+                        <div class="position-relative">
+                            <img class="object-fit-fill w-100" style="height:30vh" {{if .Thumbnail}} src="/thumbs/{{index .Thumbnail 0}}" {{end}}>
+                            <div class="position-absolute bottom-0 start-0 px-1 bg-secondary text-white">{{.Duration|formatDuration}}分钟</div>
                         </div>
-                        <div class="text-center">
+
+                        <div class="text-center p-2">
                             <a href="/video/show/{{.ID}}" class="fst-normal text-decoration-none text-secondary stretched-link">
                             {{.Title}}
                             </a>
@@ -19,6 +21,21 @@
                 </div>
             {{end}}
         </div>
+
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center">
+            <li class="page-item">
+              <a class="page-link" href="/video/list?page={{.prevPage}}">上页</a>
+            </li>
+              {{ range $idex,$v := .pages}}
+                <li class="page-itemss"><a class="page-link {{if eq $v $.currentPage}} active {{end}}" href="/video/list?page={{$v}}&category={{$.category}}">{{$v}}</a></li>
+              {{end}}
+            
+            <li class="page-item">
+              <a class="page-link" href="/video/list?page={{.nextPage}}">下页</a>
+            </li>
+          </ul>
+        </nav>
     </div>
 {{ template "footer.html" .}}
 {{end}}

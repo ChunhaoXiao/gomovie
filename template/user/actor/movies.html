@@ -1,0 +1,46 @@
+{{ define "user/actor/movies.html" }}
+
+{{template "header.html" .}}
+
+    <div class="container m-2">
+        <div class="row justify-content-center align-items-center p-4">
+            
+            <img class="rounded-circle" style="width:120px;height:100px" src="/actor/{{index .actor.Pictures 0}}">
+
+            <div class="mt-2 text-center">
+                {{.actor.Name}}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container">
+        <div class="row row-cols-2 g-0">
+            {{range .movies}}
+                <div class="col border">
+                    <a href="/video/show/{{.ID}}">
+                     <img style="width:100%" height="160px" src="/thumbs/{{.Thumbnail}}" >
+                     <div class="p-2 text-center">{{.Title}}</div>
+                    </a>
+                </div>
+            {{end}}
+        </div>
+    </div>
+  {{if len .pageArr}}
+    <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-center">
+            <li class="page-item">
+              <a class="page-link" href="/video/list?page={{.prevPage}}">上页</a>
+            </li>
+              {{ range $idex,$v := .pageArr}}
+                <li class="page-itemss"><a class="page-link {{if eq $v $.currentPage}} active {{end}}" href="/player/{{$.actor.ID}}/movies?page={{$v}}">{{$v}}</a></li>
+              {{end}}
+            
+            <li class="page-item">
+              <a class="page-link" href="/video/list?page={{.nextPage}}">下页</a>
+            </li>
+          </ul>
+        </nav>
+  {{end}}
+{{template "footer.html" .}}
+{{end}}

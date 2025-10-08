@@ -1,0 +1,21 @@
+{{ define "user/actor/lists.html" }}
+{{template "header.html" .}}
+
+<div class="container">
+    <p>演员列表</p>
+
+    <div class="row row-cols-2 g-0">
+        {{range .actors}}
+            <div class="col position-relative">
+                <img class="w-100" style="height:200px" src="/actor/{{index .Pictures 0}}" />
+                <div class="pb-3 pl-1">
+                    <a class="stretched-link" href="/player/{{.ID}}/movies">{{.Name}}</a>
+                </div>
+            </div>
+        {{end}}
+    </div>
+</div>
+
+
+{{template "footer.html" .}}
+{{end}}

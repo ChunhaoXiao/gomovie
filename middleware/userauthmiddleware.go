@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"movie/db"
 	"movie/dto"
+	"movie/models"
 
 	"github.com/gin-gonic/gin"
 )
@@ -28,6 +30,9 @@ func Auth() gin.HandlerFunc {
 			//c.Redirect(http.StatusMovedPermanently, "/user/login")
 		} else {
 			user.Username = cvalue
+			var userinfo models.User
+			db.DB.Where("username=?", cvalue).Preload("UserCoin").First(&userinfo)
+			c.Set("currentUser", userinfo)
 
 		}
 

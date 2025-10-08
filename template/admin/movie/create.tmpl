@@ -23,6 +23,16 @@
         </div>
     </div>
 
+    <div class="row">
+        <label for="" class="col-sm-2 col-form-label text-md-end text-sm-start"></label>
+        <div class="col-sm-6">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert" id="fileTip" style="display:none">
+              文件可能已存在
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
     <div class="row mb-3">
         <label for="" class="col-sm-2 col-form-label text-md-end text-sm-start">时长</label>
         <div class="col-sm-6">
@@ -84,6 +94,21 @@
             var duration = video.duration;
             console.log('duration', duration)
             document.querySelector("#duration").value = Math.floor(duration)
+            fetch("/admin/movie/checkfile", {
+                method:"POST",
+                headers: {
+                "Content-type": "application/json; charset=UTF-8"
+                },
+                body: JSON.stringify({duration:Math.floor(duration)})
+            }).then(res => {
+                res.json().then(data=> {
+                    console.log("data==========>", data)
+                    if(data.exist) {
+                        console.log("file exist.....")
+                        document.querySelector("#fileTip").style.display="block"
+                    }
+                })
+            })
         }
         video.src = URL.createObjectURL(files[0]);
     }

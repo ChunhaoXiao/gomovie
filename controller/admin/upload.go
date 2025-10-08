@@ -2,6 +2,8 @@ package admin
 
 import (
 	"fmt"
+	"movie/db"
+	"movie/models"
 	"movie/utils"
 	"path/filepath"
 
@@ -19,7 +21,7 @@ func Upload(c *gin.Context) {
 	ext := filepath.Ext(file.Filename)
 	uploadedFileName := "./uploads/" + fileName + ext
 	c.SaveUploadedFile(file, uploadedFileName)
-	thumb := utils.MakeMovieThumb(uploadedFileName)
+	thumb := utils.MakeSingleMovieThumb(uploadedFileName)
 	c.JSON(200, gin.H{
 		"data":  fileName + ext,
 		"thumb": thumb,
@@ -49,4 +51,22 @@ func UploadPicture(c *gin.Context) {
 			"thumb": thumb,
 		})*/
 
+}
+
+func CheckMovieFile(c *gin.Context) {
+	var data map[string]int
+	c.ShouldBind(&data)
+	fmt.Println("post data#########", data)
+	duration := data["duration"]
+	fmt.Println("duration............", duration)
+	var movie models.Movie
+	err := db.DB.Where("duration=?", duration).First(&movie).Error
+	fmt.Println("movie$$$$$$$$$$$$$$$$$$$$$", movie)
+	if err != nil {
+		c.JSON(200, gin.H{"exist": false})
+		return
+	}
+	c.JSON(200, gin.H{
+		"exist": true,
+	})
 }

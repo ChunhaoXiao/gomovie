@@ -17,6 +17,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type PasswordDto struct {
+	OldPassword          string `form:"oldpassword" binding:"required"`
+	Password             string `form:"password" binding:"required,min=6,max=30"`
+	PasswordConfirmation string `form:"password_confirmation" binding:"required"`
+}
+
 func RegisterForm(c *gin.Context) {
 	c.HTML(http.StatusOK, "user/auth/register.html", gin.H{})
 }
@@ -106,6 +112,7 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
+
 	c.SetCookie("user", user.Username, 3600*24, "/", "", false, true)
 	refer, err := c.Cookie("refer")
 	if err == nil {
@@ -121,4 +128,49 @@ func Logout(c *gin.Context) {
 
 	c.Redirect(http.StatusMovedPermanently, "/index")
 
+}
+
+func ChangePassword(c *gin.Context) {
+	c.HTML(http.StatusOK, "user/auth/changepass.html", gin.H{})
+}
+
+func UpdatePassword(c *gin.Context) {
+	var passwordDto PasswordDto
+	err := c.ShouldBind(&passwordDto)
+	if err != nil {
+		//fmt.Println("err is#######", err.Error())
+		var validationErrors validator.ValidationErrors
+		if errors.As(err, &validationErrors) {
+
+			validationErr := utils.GetVfalidationMsg(validationErrors)
+			c.JSON(http.StatusBadRequest, gin.H{
+				"errors": validationErr[0],
+			})
+			return
+		}
+	}
+	if passwordDto.Password != passwordDto.PasswordConfirmation {
+		fmt.Println("p1", passwordDto.Password)
+		fmt.Println("p2", passwordDto.PasswordConfirmation)
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "两次密码不一致",
+		})
+		return
+	}
+
+	user, _ := c.Get("currentUser")
+	userInfo := user.(models.User)
+	fmt.Println("pass in database::", userInfo.Password)
+	fmt.Println("submitted password", passwordDto.Password)
+	passwordErr := bcrypt.CompareHashAndPassword([]byte(userInfo.Password), []byte(passwordDto.OldPassword))
+	if passwordErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "原密码不正确",
+		})
+		return
+	}
+	userInfo.Password = passwordDto.Password
+	db.DB.Save(&userInfo)
+	c.SetCookie("user", "", 0, "/", "", false, true)
+	c.Redirect(http.StatusMovedPermanently, "/auth/login")
 }
